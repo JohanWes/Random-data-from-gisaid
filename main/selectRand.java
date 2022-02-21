@@ -1,7 +1,8 @@
 /**
  * Selects 1000 random elements from a list of entries from
  * the GISAID-database, ready to be selected in the 
- * GISAID-database afterwards.
+ * GISAID-database afterwards to download specified (random)
+ * DNA-strings. 
  */
 
 package main;
@@ -17,38 +18,70 @@ import java.util.Random;
 
 public class selectRand
 {  
-    public static void main(String[] args) throws IOException{
+    public static void main(String[] args) throws IOException{        
 
         PrintWriter out = new PrintWriter("main/gisaidOutput.txt");
-
-        String filePath = "main/dataInputs.txt";        
+        String filePath = "main/dataInputs.txt"; 
         String input = usingBufferedReader(filePath);
+
         String splitStringOld[] = input.split(","); 
         String splitString[] = new String[splitStringOld.length];
     
+        //Trim each string to remove blankspaces
         for(int i = 0; i<splitString.length; i++){
             splitString[i] = splitStringOld[i].trim();
         } 
-
+        
+        //Copy String[] to arrayList and create temp list
         List<String> stringList = Arrays.asList(splitString);  
         List<String> randomizedStringList = new ArrayList<String>();
         
         Random random = new Random();    
+
+        //Create a list of 1000 elements from the list of all entries. If it contains
+        //entries with an interval, randomize an element from that interval.
+        //All elements must be unique
         while(randomizedStringList.size() < 1000){
             String foo = stringList.get(random.nextInt(stringList.size())); 
-            if(!foo.contains("-")){
+            if(foo.contains("-")){ 
+                String randomIntervalFoo = randomInterval(foo);               
+                if(!randomizedStringList.contains(randomIntervalFoo)){
+                    randomizedStringList.add(randomIntervalFoo);                 
+                }                
+            }
+            else{
                 if(!randomizedStringList.contains(foo)){
                     randomizedStringList.add(foo);
-                }
-            } 
+                }                
+            }
         }
-
+        
+        //Prints the new entries to a .txt file with the correct formating
         for(int i = 0; i < 999; i++){            
             out.println(randomizedStringList.get(i) + ", ");
         }
-        out.println(randomizedStringList.get(999));            
+        //last element gets no "; "
+        out.println(randomizedStringList.get(999));
+        out.close();      
+    }
 
-        out.close();       
+    /**
+     * Randomizes a header so that its no longer an interval, but a random item within
+     * that interval. Eg EPI_ISL_1698273-169827 returns EPI_ISL_XXXXXX[273-827] where the
+     * brackets indicate a random number in that interval.
+     * @param input a header with an interval
+     * @return the header with a random item in that interval
+     */
+    private static String randomInterval(String input){
+
+        Random rand = new Random();
+        
+        String temp[] = input.split("-");
+        int noNumFirst = Integer.parseInt(temp[0].replaceAll("[^0-9]", ""));
+        int noNumSecond = Integer.parseInt(temp[1].replaceAll("[^0-9]", ""));
+        int dif = noNumSecond-noNumFirst;
+
+        return "EPI_ISL_" + (noNumFirst+rand.nextInt(dif+1));        
     }
 
     /**
