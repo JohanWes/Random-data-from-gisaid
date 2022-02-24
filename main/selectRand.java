@@ -57,6 +57,7 @@ public class selectRand
         }
         
         //Prints the new entries to a .txt file with the correct formating
+        //TODO: Just put this into the main loop on row 44
         for(int i = 0; i < 999; i++){            
             out.println(randomizedStringList.get(i) + ", ");
         }
@@ -67,7 +68,7 @@ public class selectRand
 
     /**
      * Randomizes a header so that its no longer an interval, but a random item within
-     * that interval. Eg EPI_ISL_1698273-169827 returns EPI_ISL_XXXXXX[273-827] where the
+     * that interval. Eg EPI_ISL_1698273-1698827 returns EPI_ISL_XXXXXX[273-827] where the
      * brackets indicate a random number in that interval.
      * @param input a header with an interval
      * @return the header with a random item in that interval
