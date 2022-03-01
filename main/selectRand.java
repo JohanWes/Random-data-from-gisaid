@@ -41,28 +41,33 @@ public class selectRand
         //Create a list of 1000 elements from the list of all entries. If it contains
         //entries with an interval, randomize an element from that interval.
         //All elements must be unique
+        //Prints the new entries to a .txt file with the correct formating
         while(randomizedStringList.size() < 1000){
             String foo = stringList.get(random.nextInt(stringList.size())); 
             if(foo.contains("-")){ 
                 String randomIntervalFoo = randomInterval(foo);               
                 if(!randomizedStringList.contains(randomIntervalFoo)){
-                    randomizedStringList.add(randomIntervalFoo);                 
+                    randomizedStringList.add(randomIntervalFoo);
+                    if(randomizedStringList.size() <= 999){
+                        out.println(randomIntervalFoo + ", ");
+                    }
+                    else{
+                        out.println(randomIntervalFoo);
+                    }                
                 }                
             }
             else{
                 if(!randomizedStringList.contains(foo)){
                     randomizedStringList.add(foo);
+                    if(randomizedStringList.size() <= 999){
+                        out.println(foo + ", ");
+                    }
+                    else{
+                        out.println(foo);
+                    }     
                 }                
             }
         }
-        
-        //Prints the new entries to a .txt file with the correct formating
-        //TODO: Just put this into the main loop on row 44
-        for(int i = 0; i < 999; i++){            
-            out.println(randomizedStringList.get(i) + ", ");
-        }
-        //last element gets no "; "
-        out.println(randomizedStringList.get(999));
         out.close();      
     }
 
